@@ -149,15 +149,15 @@ here::i_am("flag_root_for_PuG-2026-Talk.txt")
 # load data
 load(here("Code", "df.RData"))
 
+# correlations of NFC /w lP3a at 3 pos x 4 blocks
+corr.test(df_N_LP3a[,1:12], df_N_LP3a[,13])
+
+# correlation of NFC /w lP3a averaged over 3 pos x 4 blocks
 LP3a_avg = rowMeans(df_N_LP3a[,1:12])
 nfc_avg = df_N_LP3a$nfc
-
 corr.test(LP3a_avg, nfc_avg)$r
 
-corr.test(df_N_LP3a[,1:12], df_N_LP3a[,13])
-corr.test(df_N_LP3a, df_N_LP3a$N_LP3a_B2_cz)
-corr.test(df_N_LP3a, df_N_LP3a$N_LP3a_B3_cz)
-corr.test(df_N_LP3a, df_N_LP3a$N_LP3a_B4_pz)
+# SEM with blocks as first oder latent variables and overall lP3a as second order lat. var.
 
 m1 = "
 N_LP3a_B1_cz ~~ 1*N_LP3a_B1_cz
@@ -170,6 +170,7 @@ B2 =~ N_LP3a_B2_fz + N_LP3a_B2_cz + 1*N_LP3a_B2_pz
 B3 =~ N_LP3a_B3_fz + N_LP3a_B3_cz + 1*N_LP3a_B3_pz
 B4 =~ N_LP3a_B4_fz + N_LP3a_B4_cz + 1*N_LP3a_B4_pz
 
+# the following is necessary to omit negative variances 
 B4 ~~ 1*B4
 B3 ~~ 1*B3
 B2 ~~ 1*B2
@@ -182,6 +183,8 @@ NFC =~ nfc
 f1 = sem(m1, df_N_LP3a)
 
 summary(f1, fit.measures=T, standardized = T)
+# bad fit, but used for illustration purpose only 
 
+# correlation of NFC /w latent lP3a variables 
 df_N_LP3a_f1 = lavPredict(f1)
 corr.test(df_N_LP3a_f1)
